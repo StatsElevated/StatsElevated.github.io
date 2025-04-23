@@ -1,0 +1,5 @@
+---
+title: "Welcome to Stats Elevated"
+---
+
+This is our hub for collaborative statistics projects.
