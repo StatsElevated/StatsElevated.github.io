@@ -3,7 +3,7 @@ name: Import Org READMEs
 on:
   workflow_dispatch:
   schedule:
-    - cron: "0 8 * * 1"
+    - cron: "0 8 * * 1"  # every Monday at 8am UTC
 
 jobs:
   fetch-readmes:
@@ -25,19 +25,21 @@ jobs:
             readme_url="https://raw.githubusercontent.com/StatsElevated/${repo}/main/README.md"
             target="projects/${repo}.qmd"
             if curl --silent --head --fail "$readme_url" > /dev/null; then
-              echo "---" > "$target"
-              echo "title: \"${repo//-/ }\"" >> "$target"
-              echo "date: $(date --iso-8601)" >> "$target"
-              echo "categories: [project]" >> "$target"
-              echo "---" >> "$target"
-              echo "" >> "$target"
-              curl -s "$readme_url" >> "$target"
+              {
+                echo "---"
+                echo "title: \"${repo//-/ }\""
+                echo "date: $(date --iso-8601)"
+                echo "categories: [project]"
+                echo "---"
+                echo ""
+                curl -s "$readme_url"
+              } > "$target"
             else
               echo "No README found for $repo"
             fi
           done
 
-	    - name: Commit and push updated project posts
+      - name: Commit and push updated project posts
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}
         run: |
@@ -47,4 +49,3 @@ jobs:
           git add projects/
           git commit -m "Update project posts from org READMEs" || echo "No changes"
           git push origin main
-
