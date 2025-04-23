@@ -1,0 +1,47 @@
+name: Import Org READMEs
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "0 8 * * 1"
+
+jobs:
+  fetch-readmes:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout site repo
+        uses: actions/checkout@v3
+
+      - name: Install jq
+        run: sudo apt-get update && sudo apt-get install -y jq
+
+      - name: Pull and wrap README.md from each org repo
+        run: |
+          mkdir -p projects
+          curl -s https://api.github.com/orgs/StatsElevated/repos?per_page=100 | jq -r '.[].name' |
+          while read repo; do
+            echo "Processing $repo"
+            readme_url="https://raw.githubusercontent.com/StatsElevated/${repo}/main/README.md"
+            target="projects/${repo}.qmd"
+            if curl --silent --head --fail "$readme_url" > /dev/null; then
+              echo "---" > "$target"
+              echo "title: \"${repo//-/ }\"" >> "$target"
+              echo "date: $(date --iso-8601)" >> "$target"
+              echo "categories: [project]" >> "$target"
+              echo "---" >> "$target"
+              echo "" >> "$target"
+              curl -s "$readme_url" >> "$target"
+            else
+              echo "No README found for $repo"
+            fi
+          done
+
+      - name: Commit and push updated project posts
+        run: |
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+          git add projects/
+          git commit -m "Update project posts from org READMEs" || echo "No changes"
+          git push origin main
+
