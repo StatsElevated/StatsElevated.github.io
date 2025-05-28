@@ -1,0 +1,116 @@
+---
+title: "Informative Missing Imputation Method"
+diagram:
+  engine:
+    tikz:
+      header-includes:
+        - '\usepackage{tikz}'
+        - '\usetikzlibrary{arrows.meta, positioning}'
+format: html
+bibliography: references.bib
+date: 2025-05-28
+categories: 
+  - Imputation
+  - mDAG
+  - Gaussian Copula
+---
+
+# Introduction
+
+Traditionally used imputation models for incomplete multivariate data consistently reconstructs the target joint distriubution under a missing-at-random (MAR) mechanism. When the data are missing-not-at-random (MNAR), however, many of these methods become biased: missingness depends on unobserved values, so recovering the target law, $p(\mathbf{X})$ for a vector of random variables $\mathbf{X}$ requires modeling the full law, $p(\mathbf{X}, \mathbf{M})$ where $\mathbf{M}$ is a vector of missingness indicators.
+
+# Preliminaries
+
+Here, we review Gaussian copula model and its extensions. These models are used to model the latent joint distribution of continuous, truncated, ordinal, and binary variables.
+
+::: {#def-npn}
+[@liu2009] Let $\mathbf{Z}=(Z_1,...,Z_p)$ be a vector of random variables. We say $\mathbf{Z}$ follows nonparanormal distribution and denote $\mathbf{Z} \sim NPN_p(0,\Sigma, f)$, if there exists monotone increasing functions $f=(f_1, ... , f_p)$ such that $L=f(\mathbf{Z})=(f_1(Z_1), ...,f_p(Z_p)) \sim N(0, \Sigma)$, where $\Sigma$ is a correlation matrix.
+:::
+
+::: {#def-glnpn}
+Next, we define Generalized non-paranormal distribution. Let $\mathbf{X}=(X_c, X_t, X_o, X_b)$ be vector of random variables, where $X_c, X_t, X_o, X_b$ are continuous, truncated, ordinal, and binary variables with dimensions $p_c, p_t, p_o, p_b$, respectively. We say $\mathbf{X}$ follows generalized latent nonparanormal distribution and denote $\mathbf{X}\sim GLNPN_p(0,\Sigma, f, \mathbf{\delta})$ if $\mathbf{Z} \sim NPN(0,\Sigma, f)$ and we have, $$
+\begin{align}
+X_c &= Z_c\\
+X_t &= I(Z_t>\delta_t)Z_t\\
+X_o &= \sum_{j=0}^{l-1} j\cdot I(\delta_{o,j} \leq Z_o < \delta_{o,j+1}),\text{ where } \delta_{o,0}=-\infty,\delta_{o,l}=\infty\\
+X_b &= I(Z_b > \delta_{b})
+\end{align}
+$$ where $\mathbf{\delta}=\{\delta_t, \delta_o, \delta_b\}$ is the set of all cut points. Since $\mathbf{\delta}$ is not identifiable, we define $\Delta=f(\delta)$ which is estimable from data.
+:::
+
+Since $Z$ is latent, [@fan2017] proposed using Kendall's $\tau$ to estimate $\Sigma$. Kendall's $\tau$ between two variables $X_i$, $X_j$ is defined as $\tau_{ij}=E[\text{sign}(X_j-X_j')(X_k-X_k')]$ which captures if pairs of observations from two variables are concordant or diconcordant. Previous work have identified invertible bridging functions $F_{ij}$ that maps the latent correlation $\Sigma_{ij}$ to $\tau_{ij}$ between any two variables $X_i$, $X_j$ that are either continuous, truncated, ordinal, or binary, that is, $\tau_{ij}=F_{ij}(\Sigma_{ij}; \Delta)$ where $\Delta=f(\delta)$ ([@kendall1990, @fan2017, @quan, @yoon2020, @dey]). For truncated and categorical variables, $\Delta$ is estimated with moment-based plug-in estimator. For example, the estimated cutoff between an ordinal variable at level $j-1$ and $j$, is $\hat \Delta_j=\Phi^{-1}\left(\frac{\sum_i I(X_{i}<j)}{n}\right)$ where $\Phi$ is the cumulative distribution function of standard normal distribution. Once we obtain an estimator for $\tau$, the estimator for $\Sigma_{ij}$ is given by 
+
+\begin{equation}
+\hat \sigma_{ij} = F_{ij}^{-1}(\hat \tau_{ij}; \hat \Delta) = \text{arg min}_{\rho \in [-1,1]} F_{ij}(\rho; \hat \Delta) - \hat \tau_{ij}
+\end{equation}
+
+
+## Estimating $\tau$ Under MNAR
+
+Previous work have estimated $\tau$ by \begin{equation}
+\hat \tau_{ij} = \frac{1}{\binom{n}{2}} \sum_{k<k'} \text{sgn}(X_{ik} - X_{ik'})(X_{jk} - X_{jk'})
+\end{equation} However, this estimator is consistent under missing completely at random setting. Once we introduce informative missingness, the above estimator is biased. To address this issue, we need to consider the missing data mechanism more carefully.
+
+Hypothetical d-separation criteria for our approach to be applicable:
+
+Let $G(X,R)$ be a mDAG $X$ is a vector of random variables with $p$ dimensions and $R$ is a vector of corresponding missingness indicator. 
+
+1.  For all $i\in\{1..p\}$, we have $X_i \perp_{d-sep} R_i \mid X_{J_1}, R_{K_1}$ for some subset $X_{J_1}\subset X$, and $R_{K_1}\subset R$ where $J_1,\;K_1$ are set of indices.
+2.  If $J_1\neq\emptyset$, then, for each $X_j\in X_{J_1}$, we have $X_j \perp_{d-sep} R_j\mid X_{J_2}, R_{K_2}$.
+3.  There exists $N$ such that $X_{j_N} \perp_{d-sep} R_{j_N} \mid X_{J_{N+1}}, R_{K_{N+1}}$ where $J_{N+1}=\emptyset$.
+4.  $J_1,...,J_N$ are mutually exclusive.
+
+## Illustrative Example
+
+### TOIB Study
+
+The TOIB study examined whether general practitioners should recommend oral or topical non-steroidal anti-inflammatory drugs (NSAIDs) to older adults with knee pain. A total of 585 study participants were recruited from 26 UK general practices. This study had a comprehensive cohort study design where some practices only enrolled participants to randomized controlled trial (RCT), but some practices gave participants a choice to be randomized, or receive a treatment they preferred (participant preference study, PPS). Knee pain measured by Western Ontartio and McMaster Universities Osteoarthritis Index (WOMAC) was the primary outcome and SF-36 was the secondary outcome. Participant demographics were collected at baseline, and WOMAC, SF-12 surveys were filled out at 0, 3,6, 12, and 24 months. Baseline characteristics and baseline survey results were used as covariates and their relationship is shown in the DAG below.
+
+``` tikz
+\begin{tikzpicture}[node distance=1.5cm]
+  \node (X11) [draw, circle] {$X_{11}$};
+  \node (X12) [draw, circle, below=of X11] {$X_{12}$};
+  \node (M12) [draw, circle, right=of X12] {$M_{12}$};
+  \node (M11) [draw, circle, right=of X11] {$M_{11}$};
+
+  \path[->]
+    (X11) edge[-] (X12)
+    (X11) edge (M12)
+    (M12) edge[-] (M11);
+\end{tikzpicture}
+```
+
+We can see from the above DAG, that missingness of $X_{11}$ depends on $M_{12}$ and the missingness of $X_{12}$ depends on $X_{11}$. Therefore, we cannot use the observed data to calculate Kendall's $\tau$. We show in Appendix, the following estimation result. \begin{equation}
+\widehat{\tau} = \frac{1}{ \left( \begin{array}{c} n \\ 2 \end{array} \right)} \sum_{k,k'} \widehat{h}(m_{12,k},m_{12,k'})
+\end{equation} where \begin{equation}
+\widehat{h(}m_{12},m_{12}') = \frac{\sum_{l < l'} \text{sgn}(X_{11,l} – X_{11,l'}) \cdot \widehat{g}(X_{11,l},X_{11,l'}) I( M_{11,l}=0, M_{11,l'}=0, M_{12,l}=m_{12}, M_{12,l'}=m_{12}')   }{\sum_{l < l'} I(M_{11,l}=0, M_{11,l'}=0, M_{12,l}=m_{12}, M_{12,l'}=m_{12}')}
+\end{equation} \begin{equation}
+\widehat{g}(\mathbf{x_{11}}) = \frac{ \sum_{j<j'} \text{sgn}( (X_{12,j} – X_{12,j'}) I(\mathbf{X_{11}}=\mathbf{x_{11}}, M_{11,j}=0, M_{11,j'}=0,M_{12,j}=0, M_{12,j'}=0)  }{\sum_{j<j'}  I(\mathbf{X_{11}}=\mathbf{x_{11}},',  M_{11,j}=0, M_{11,j'}=0, M_{12,j}=0, M_{12,j'}=0)}
+\end{equation}
+
+# Appendix
+
+\begin{align}
+    \tau=&E\big[ \text{sgn}( (X_{12} – X_{12}') (X_{11} – X_{11}') \big]\\
+    =&E\bigg[E\big[ \text{sgn}( (X_{12} – X_{12}') (X_{11} – X_{11}')) \mid \mathbf{X_{11,11'}} \big]\bigg]\\
+    =&E\bigg[\text{sgn}(X_{11} – X_{11}') \cdot E\big[ \text{sgn}( X_{12} – X_{12}') \mid \mathbf{X_{11,11'}} \big]\bigg]\\
+    =&E\bigg[\text{sgn}(X_{11} – X_{11}') \cdot E\big[ \text{sgn}( X_{12} – X_{12}') \mid \mathbf{X_{11,11'}}, M_{12}=0, M_{12}'=0, M_{11}=0, M_{11}'=0 \big]\bigg]\\
+    =&E\bigg[E\bigg[\text{sgn}(X_{11} – X_{11}') \cdot E\big[ \text{sgn}( X_{12} – X_{12}') \mid \mathbf{X_{11,11'}}, M_{12}=0, M_{12}'=0,M_{11}=0, M_{11}'=0 \big] \bigg| M_{12}, M_{12}'  \bigg]\bigg]\\
+    =&E\bigg[\underbrace{E\bigg[\color{blue}\text{sgn}(X_{11} – X_{11}') \cdot \underbrace{E\big[ \text{sgn}( X_{12} – X_{12}') \mid \mathbf{X_{11,11'}}, M_{12}=0, M_{12}'=0,M_{11}=0, M_{11}'=0 \big]}_{g(\mathbf{X_{11,11'}})} \color{black}\bigg| M_{11}=0, M_{11}'=0, M_{12}, M_{12}'  \bigg]}_{h(M_{12},M_{12'})}\bigg]\\
+\end{align}
+
+
+\begin{align}
+g(\mathbf{X_{11,11'}}) & = E\big[ \text{sgn}( (X_{12} – X_{12}') \mid \mathbf{X_{11,11'}}, M_{11}=0,M_{11'}=0, M_{12}=0, M_{12}'=0 \big] \\& = \frac{ E \big[ \text{sgn}( (X_{12} – X_{12}') I(\mathbf{X_{11}}=\mathbf{x_{11}}, M_{11}=0, M_{11'}=0,M_{12}=0, M_{12}'=0) \big] }{E\big[  I(\mathbf{X_{11}}=\mathbf{x_{11}}, M_{11}=0, M_{11'}=0, M_{12}=0, M_{12}'=0) \big]}
+\end{align} We can estimate this by \begin{equation}
+\widehat{g}(\mathbf{x_{11}}) = \frac{ \sum_{j<j'} \text{sgn}( (X_{12,j} – X_{12,j'}) I(\mathbf{X_{11}}=\mathbf{x_{11}}, M_{11,j}=0, M_{11,j'}=0,M_{12,j}=0, M_{12,j'}=0)  }{\sum_{j<j'}  I(\mathbf{X_{11}}=\mathbf{x_{11}},',  M_{11,j}=0, M_{11,j'}=0, M_{12,j}=0, M_{12,j'}=0)}
+\end{equation}
+
+\begin{align*}
+h(m_{12},m_{12}') & = E\bigg[ \text{sgn}(X_{11} – X_{11}') \cdot g(X_{11},X_{11'}) \bigg| M_{11}=0, M_{11}'=0, M_{12}=m_{12}, M_{12}'=m_{12}'  \bigg] \\
+& = \frac{E\bigg[ \text{sgn}(X_{11} – X_{11}') \cdot g(X_{11},X_{11'}) I( M_{11}=0, M_{11}'=0, M_{12}=m_{12}, M_{12}'=m_{12}')  \bigg]  }{E\bigg[ I(M_{11}=0, M_{11}'=0, M_{12}=m_{12}, M_{12}'=m_{12}')  \bigg] }
+\end{align*} This can be estimated by \begin{equation}
+\widehat{h(}m_{12},m_{12}') = \frac{\sum_{l < l'} \text{sgn}(X_{11,l} – X_{11,l'}) \cdot \widehat{g}(X_{11,l},X_{11,l'}) I( M_{11,l}=0, M_{11,l'}=0, M_{12,l}=m_{12}, M_{12,l'}=m_{12}')   }{\sum_{l < l'} I(M_{11,l}=0, M_{11,l'}=0, M_{12,l}=m_{12}, M_{12,l'}=m_{12}')}
+\end{equation} Now $\tau = E[h(M_{12},M_{12}')]$ Then, we estimate $\tau$ by \begin{equation}
+\widehat{\tau} = \frac{1}{ \left( \begin{array}{c} n \\ 2 \end{array} \right)} \sum_{k,k'} \widehat{h}(m_{12,k},m_{12,k'})
+\end{equation}

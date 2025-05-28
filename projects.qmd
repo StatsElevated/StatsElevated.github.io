@@ -1,5 +1,0 @@
----
-title: "Project Gallery"
----
-
-Coming soon: auto-imported README files!

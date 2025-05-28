@@ -1,1 +1,3 @@
 /.quarto/
+*.sh
+.DS_Store

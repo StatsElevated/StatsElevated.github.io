@@ -8,7 +8,10 @@ website:
       - text: Home
         href: index.qmd
       - text: Projects
-        href: projects.qmd
+        href: posts.qmd
+    tools:
+      - icon: github
+        href: https://github.com/StatsElevated
 
 
 
