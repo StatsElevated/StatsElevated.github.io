@@ -7,20 +7,6 @@
     "text": "Informative Missing Imputation Method\n\n\n\n\n\n\nImputation\n\n\nmDAG\n\n\nGaussian Copula\n\n\n\n\n\n\n\n\n\nMay 28, 2025\n\n\n\n\n\n\nNo matching items"
   },
   {
-    "objectID": "posts/first_post.html",
-    "href": "posts/first_post.html",
-    "title": "Test Qmd",
-    "section": "",
-    "text": "something\nsomething something"
-  },
-  {
-    "objectID": "index.html",
-    "href": "index.html",
-    "title": "Welcome to Stats Elevated",
-    "section": "",
-    "text": "At StatsElevated, we believe in the power of open collaboration to advance data science and statistical thinking. Our platform is a space where real-world data analysis problems are shared in progress, inviting contributors from diverse backgrounds to engage, collaborate, and build solutions together. By leveraging tools like R Markdown and Quarto, we ensure transparency and reproducibility in every step of the analytical process. Every contribution is tracked and credited, fostering a community that values insight, rigor, and shared learning. Our mission is to elevate statistical problem-solving—together."
-  },
-  {
     "objectID": "posts/main_writeup.html",
     "href": "posts/main_writeup.html",
     "title": "Informative Missing Imputation Method",
@@ -40,5 +26,12 @@
     "title": "Informative Missing Imputation Method",
     "section": "Illustrative Example",
     "text": "Illustrative Example\n\nTOIB Study\nThe TOIB study examined whether general practitioners should recommend oral or topical non-steroidal anti-inflammatory drugs (NSAIDs) to older adults with knee pain. A total of 585 study participants were recruited from 26 UK general practices. This study had a comprehensive cohort study design where some practices only enrolled participants to randomized controlled trial (RCT), but some practices gave participants a choice to be randomized, or receive a treatment they preferred (participant preference study, PPS). Knee pain measured by Western Ontartio and McMaster Universities Osteoarthritis Index (WOMAC) was the primary outcome and SF-36 was the secondary outcome. Participant demographics were collected at baseline, and WOMAC, SF-12 surveys were filled out at 0, 3,6, 12, and 24 months. Baseline characteristics and baseline survey results were used as covariates and their relationship is shown in the DAG below.\n\\begin{tikzpicture}[node distance=1.5cm]\n  \\node (X11) [draw, circle] {$X_{11}$};\n  \\node (X12) [draw, circle, below=of X11] {$X_{12}$};\n  \\node (M12) [draw, circle, right=of X12] {$M_{12}$};\n  \\node (M11) [draw, circle, right=of X11] {$M_{11}$};\n\n  \\path[-&gt;]\n    (X11) edge[-] (X12)\n    (X11) edge (M12)\n    (M12) edge[-] (M11);\n\\end{tikzpicture}\nWe can see from the above DAG, that missingness of \\(X_{11}\\) depends on \\(M_{12}\\) and the missingness of \\(X_{12}\\) depends on \\(X_{11}\\). Therefore, we cannot use the observed data to calculate Kendall’s \\(\\tau\\). We show in Appendix, the following estimation result. \\[\\begin{equation}\n\\widehat{\\tau} = \\frac{1}{ \\left( \\begin{array}{c} n \\\\ 2 \\end{array} \\right)} \\sum_{k,k'} \\widehat{h}(m_{12,k},m_{12,k'})\n\\end{equation}\\] where \\[\\begin{equation}\n\\widehat{h(}m_{12},m_{12}') = \\frac{\\sum_{l &lt; l'} \\text{sgn}(X_{11,l} – X_{11,l'}) \\cdot \\widehat{g}(X_{11,l},X_{11,l'}) I( M_{11,l}=0, M_{11,l'}=0, M_{12,l}=m_{12}, M_{12,l'}=m_{12}')   }{\\sum_{l &lt; l'} I(M_{11,l}=0, M_{11,l'}=0, M_{12,l}=m_{12}, M_{12,l'}=m_{12}')}\n\\end{equation}\\] \\[\\begin{equation}\n\\widehat{g}(\\mathbf{x_{11}}) = \\frac{ \\sum_{j&lt;j'} \\text{sgn}( (X_{12,j} – X_{12,j'}) I(\\mathbf{X_{11}}=\\mathbf{x_{11}}, M_{11,j}=0, M_{11,j'}=0,M_{12,j}=0, M_{12,j'}=0)  }{\\sum_{j&lt;j'}  I(\\mathbf{X_{11}}=\\mathbf{x_{11}},',  M_{11,j}=0, M_{11,j'}=0, M_{12,j}=0, M_{12,j'}=0)}\n\\end{equation}\\]"
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "Welcome to Stats Elevated",
+    "section": "",
+    "text": "At StatsElevated, we believe in the power of open collaboration to advance data science and statistical thinking. Our platform is a space where real-world data analysis problems are shared in progress, inviting contributors from diverse backgrounds to engage, collaborate, and build solutions together. By leveraging tools like R Markdown and Quarto, we ensure transparency and reproducibility in every step of the analytical process. Every contribution is tracked and credited, fostering a community that values insight, rigor, and shared learning. Our mission is to elevate statistical problem-solving—together."
   }
 ]
