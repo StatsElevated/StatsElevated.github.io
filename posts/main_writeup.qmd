@@ -17,11 +17,7 @@ categories:
 
 # Introduction
 
-<<<<<<< HEAD
-Traditionally used imputation models for incomplete multivariate data reconstructs the target joint distriubution under a missing-at-random (MAR) mechanism. When the data are missing-not-at-random (MNAR), however, many of these methods become biased: missingness depends on unobserved values, so recovering the target law, $p(\mathbf{X})$ for a vector of random variables $\mathbf{X}$ requires modeling the full law, $p(\mathbf{X}, \mathbf{M})$ where $\mathbf{M}$ is a vector of missingness indicators.
-=======
 Last updated: 2025-06-10
->>>>>>> 71fd82e (updated imputation section)
 
 Traditionally used imputation models for incomplete multivariate data reconstructs the target joint distribution under a missing-at-random (MAR) mechanism. When the data are missing-not-at-random (MNAR), however, many of these methods become biased: missingness depends on unobserved values, so recovering the target law, $p(\mathbf{X})$ for a vector of random variables $\mathbf{X}$ requires modeling the full law, $p(\mathbf{X}, \mathbf{M})$ where $\mathbf{M}$ is a vector of missingness indicators.
 
