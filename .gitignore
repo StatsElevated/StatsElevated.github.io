@@ -1,4 +1,6 @@
 /.quarto/
 *.sh
 _site/
+_site/*
 .DS_Store
+.Rhistory
