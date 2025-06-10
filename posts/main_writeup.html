@@ -228,16 +228,17 @@ window.Quarto = {
 
 <section id="introduction" class="level1">
 <h1>Introduction</h1>
-<p>Traditionally used imputation models for incomplete multivariate data consistently reconstructs the target joint distriubution under a missing-at-random (MAR) mechanism. When the data are missing-not-at-random (MNAR), however, many of these methods become biased: missingness depends on unobserved values, so recovering the target law, <span class="math inline">\(p(\mathbf{X})\)</span> for a vector of random variables <span class="math inline">\(\mathbf{X}\)</span> requires modeling the full law, <span class="math inline">\(p(\mathbf{X}, \mathbf{M})\)</span> where <span class="math inline">\(\mathbf{M}\)</span> is a vector of missingness indicators.</p>
+<p>&lt;&lt;&lt;&lt;&lt;&lt;&lt; HEAD Traditionally used imputation models for incomplete multivariate data reconstructs the target joint distriubution under a missing-at-random (MAR) mechanism. When the data are missing-not-at-random (MNAR), however, many of these methods become biased: missingness depends on unobserved values, so recovering the target law, <span class="math inline">\(p(\mathbf{X})\)</span> for a vector of random variables <span class="math inline">\(\mathbf{X}\)</span> requires modeling the full law, <span class="math inline">\(p(\mathbf{X}, \mathbf{M})\)</span> where <span class="math inline">\(\mathbf{M}\)</span> is a vector of missingness indicators. ======= Last updated: 2025-06-10 &gt;&gt;&gt;&gt;&gt;&gt;&gt; 71fd82e (updated imputation section)</p>
+<p>Traditionally used imputation models for incomplete multivariate data reconstructs the target joint distribution under a missing-at-random (MAR) mechanism. When the data are missing-not-at-random (MNAR), however, many of these methods become biased: missingness depends on unobserved values, so recovering the target law, <span class="math inline">\(p(\mathbf{X})\)</span> for a vector of random variables <span class="math inline">\(\mathbf{X}\)</span> requires modeling the full law, <span class="math inline">\(p(\mathbf{X}, \mathbf{M})\)</span> where <span class="math inline">\(\mathbf{M}\)</span> is a vector of missingness indicators.</p>
 </section>
-<section id="preliminaries" class="level1">
-<h1>Preliminaries</h1>
+<section id="methods" class="level1">
+<h1>Methods</h1>
 <p>Here, we review Gaussian copula model and its extensions. These models are used to model the latent joint distribution of continuous, truncated, ordinal, and binary variables.</p>
 <div id="def-npn" class="theorem definition">
 <p><span class="theorem-title"><strong>Definition 1</strong></span> <span class="citation" data-cites="liu2009">(<a href="#ref-liu2009" role="doc-biblioref">Liu, Lafferty, and Wasserman 2009</a>)</span> Let <span class="math inline">\(\mathbf{Z}=(Z_1,...,Z_p)\)</span> be a vector of random variables. We say <span class="math inline">\(\mathbf{Z}\)</span> follows nonparanormal distribution and denote <span class="math inline">\(\mathbf{Z} \sim NPN_p(0,\Sigma, f)\)</span>, if there exists monotone increasing functions <span class="math inline">\(f=(f_1, ... , f_p)\)</span> such that <span class="math inline">\(L=f(\mathbf{Z})=(f_1(Z_1), ...,f_p(Z_p)) \sim N(0, \Sigma)\)</span>, where <span class="math inline">\(\Sigma\)</span> is a correlation matrix.</p>
 </div>
 <div id="def-glnpn" class="theorem definition">
-<p><span class="theorem-title"><strong>Definition 2</strong></span> Next, we define Generalized non-paranormal distribution. Let <span class="math inline">\(\mathbf{X}=(X_c, X_t, X_o, X_b)\)</span> be vector of random variables, where <span class="math inline">\(X_c, X_t, X_o, X_b\)</span> are continuous, truncated, ordinal, and binary variables with dimensions <span class="math inline">\(p_c, p_t, p_o, p_b\)</span>, respectively. We say <span class="math inline">\(\mathbf{X}\)</span> follows generalized latent nonparanormal distribution and denote <span class="math inline">\(\mathbf{X}\sim GLNPN_p(0,\Sigma, f, \mathbf{\delta})\)</span> if <span class="math inline">\(\mathbf{Z} \sim NPN(0,\Sigma, f)\)</span> and we have, <span class="math display">\[
+<p><span class="theorem-title"><strong>Definition 2</strong></span> Next, we define Generalized non-paranormal distribution. Let <span class="math inline">\(\mathbf{X}=(X_c, X_t, X_o, X_b)\)</span> be vector of random variables, where subscript is used to denote variable type: <span class="math inline">\(X_c, X_t, X_o, X_b\)</span> are continuous, truncated, ordinal, and binary variables with dimensions <span class="math inline">\(p_c, p_t, p_o, p_b\)</span>, respectively. We say <span class="math inline">\(\mathbf{X}\)</span> follows generalized latent nonparanormal distribution and denote <span class="math inline">\(\mathbf{X}\sim GLNPN_p(0,\Sigma, f, \mathbf{\delta})\)</span> if <span class="math inline">\(\mathbf{Z} \sim NPN(0,\Sigma, f)\)</span> and we have, <span class="math display">\[
 \begin{align}
 X_c &amp;= Z_c\\
 X_t &amp;= I(Z_t&gt;\delta_t)Z_t\\
@@ -246,29 +247,68 @@ X_b &amp;= I(Z_b &gt; \delta_{b})
 \end{align}
 \]</span> where <span class="math inline">\(\mathbf{\delta}=\{\delta_t, \delta_o, \delta_b\}\)</span> is the set of all cut points. Since <span class="math inline">\(\mathbf{\delta}\)</span> is not identifiable, we define <span class="math inline">\(\Delta=f(\delta)\)</span> which is estimable from data.</p>
 </div>
-<p>Since <span class="math inline">\(Z\)</span> is latent, <span class="citation" data-cites="fan2017">(<a href="#ref-fan2017" role="doc-biblioref">Fan et al. 2017</a>)</span> proposed using Kendall’s <span class="math inline">\(\tau\)</span> to estimate <span class="math inline">\(\Sigma\)</span>. Kendall’s <span class="math inline">\(\tau\)</span> between two variables <span class="math inline">\(X_i\)</span>, <span class="math inline">\(X_j\)</span> is defined as <span class="math inline">\(\tau_{ij}=E[\text{sign}(X_j-X_j')(X_k-X_k')]\)</span> which captures if pairs of observations from two variables are concordant or diconcordant. Previous work have identified invertible bridging functions <span class="math inline">\(F_{ij}\)</span> that maps the latent correlation <span class="math inline">\(\Sigma_{ij}\)</span> to <span class="math inline">\(\tau_{ij}\)</span> between any two variables <span class="math inline">\(X_i\)</span>, <span class="math inline">\(X_j\)</span> that are either continuous, truncated, ordinal, or binary, that is, <span class="math inline">\(\tau_{ij}=F_{ij}(\Sigma_{ij}; \Delta)\)</span> where <span class="math inline">\(\Delta=f(\delta)\)</span> (<span class="citation" data-cites="kendall1990">Dey and Zipunnikov (<a href="#ref-dey" role="doc-biblioref">n.d.</a>)</span>). For truncated and categorical variables, <span class="math inline">\(\Delta\)</span> is estimated with moment-based plug-in estimator. For example, the estimated cutoff between an ordinal variable at level <span class="math inline">\(j-1\)</span> and <span class="math inline">\(j\)</span>, is <span class="math inline">\(\hat \Delta_j=\Phi^{-1}\left(\frac{\sum_i I(X_{i}&lt;j)}{n}\right)\)</span> where <span class="math inline">\(\Phi\)</span> is the cumulative distribution function of standard normal distribution. Once we obtain an estimator for <span class="math inline">\(\tau\)</span>, the estimator for <span class="math inline">\(\Sigma_{ij}\)</span> is given by</p>
-<p><span class="math display">\[\begin{equation}
-\hat \sigma_{ij} = F_{ij}^{-1}(\hat \tau_{ij}; \hat \Delta) = \text{arg min}_{\rho \in [-1,1]} F_{ij}(\rho; \hat \Delta) - \hat \tau_{ij}
-\end{equation}\]</span></p>
+<p>Since <span class="math inline">\(Z\)</span> is latent, <span class="citation" data-cites="fan2017">(<a href="#ref-fan2017" role="doc-biblioref">Fan et al. 2017</a>)</span> proposed using Kendall’s <span class="math inline">\(\tau\)</span> to estimate <span class="math inline">\(\Sigma\)</span>. Kendall’s <span class="math inline">\(\tau\)</span> between two variables <span class="math inline">\(X_j\)</span>, <span class="math inline">\(X_k\)</span> is defined as <span class="math inline">\(\tau_{jk}=E[\text{sign}(X_j-X_j')(X_k-X_k')]\)</span> which captures if pairs of observations from two variables are concordant or disconcordant. Previous work have identified invertible bridging functions <span class="math inline">\(F_{jk}\)</span> that maps the latent correlation <span class="math inline">\(\Sigma_{jk}\)</span> to <span class="math inline">\(\tau_{jk}\)</span> between any two variables <span class="math inline">\(X_j\)</span>, <span class="math inline">\(X_k\)</span> that are either continuous, truncated, ordinal, or binary, that is, <span class="math inline">\(\tau_{jk}=F_{jk}(\Sigma_{jk}; \Delta)\)</span> where <span class="math inline">\(\Delta=f(\delta)\)</span> (<span class="citation" data-cites="kendall1990">Dey and Zipunnikov (<a href="#ref-dey" role="doc-biblioref">n.d.</a>)</span>). For truncated and categorical variables, <span class="math inline">\(\Delta\)</span> is estimated with a naive moment-based plug-in estimator. For example, the estimated cutoff between an ordinal variable at level <span class="math inline">\(l-1\)</span> and <span class="math inline">\(l\)</span>, is <span class="math inline">\(\hat \Delta_{j,l}=\Phi^{-1}\left(\frac{\sum_i I(X_{j}&lt;l, M_{j}=0)}{\sum_i I(M_i=0)}\right)\)</span> where <span class="math inline">\(\Phi\)</span> is the cumulative distribution function (CDF) of standard normal distribution and <span class="math inline">\(M_i\)</span> is a missing indicator for <span class="math inline">\(X_i\)</span> with <span class="math inline">\(M_i=1\)</span> if missing. Once we obtain an estimator for <span class="math inline">\(\tau_{jk}\)</span>, the estimator for <span class="math inline">\(\Sigma_{jk}\)</span> is given by</p>
+<p><span class="math display">\[
+\begin{equation}
+\hat \sigma_{jk} = F_{jk}^{-1}(\hat \tau_{jk}; \hat \Delta) = \text{arg min}_{\rho \in [-1,1]} F_{jk}(\rho; \hat \Delta) - \hat \tau_{jk}
+\end{equation}
+\]</span></p>
 <section id="estimating-tau-under-mnar" class="level2">
 <h2 class="anchored" data-anchor-id="estimating-tau-under-mnar">Estimating <span class="math inline">\(\tau\)</span> Under MNAR</h2>
-<p>Previous work have estimated <span class="math inline">\(\tau\)</span> by <span class="math display">\[\begin{equation}
-\hat \tau_{ij} = \frac{1}{\binom{n}{2}} \sum_{k&lt;k'} \text{sgn}(X_{ik} - X_{ik'})(X_{jk} - X_{jk'})
-\end{equation}\]</span> However, this estimator is consistent under missing completely at random setting. Once we introduce informative missingness, the above estimator is biased. To address this issue, we need to consider the missing data mechanism more carefully.</p>
-<p>Hypothetical d-separation criteria for our approach to be applicable:</p>
+<p>Previous work have estimated <span class="math inline">\(\tau\)</span> by</p>
+<p><span class="math display">\[
+\begin{equation}
+\hat \tau_{jk} = \frac{1}{\binom{n}{2}} \sum_{i&lt;i'} \text{sgn}(X_{ji} - X_{ji'})(X_{ki} - X_{ki'})
+\end{equation}
+\]</span></p>
+<p>This estimator is consistent under missing completely at random setting. Under missing at random or missing not at random setting, the above estimator is biased. In this section, we propose a general framework for constructing an unbiased estimator for <span class="math inline">\(\tau\)</span> under missing not at random setting with a given missing data directed acyclic graph (mDAG) that characterizes the missingness mechanism.</p>
+<div id="def-mDAG" class="theorem definition">
+<p><span class="theorem-title"><strong>Definition 3</strong></span> Let <span class="math inline">\(M\)</span> be a vector of missingness indicator for <span class="math inline">\(X\)</span> where <span class="math inline">\(M_j=1\)</span> if <span class="math inline">\(X_j\)</span> value is unobserved. conditions</p>
+</div>
+<p>full law / target law identification criterion - Nabi literature review here. Hypothetical d-separation criteria for our approach to be applicable:</p>
 <p>Let <span class="math inline">\(G(X,R)\)</span> be a mDAG <span class="math inline">\(X\)</span> is a vector of random variables with <span class="math inline">\(p\)</span> dimensions and <span class="math inline">\(R\)</span> is a vector of corresponding missingness indicator.</p>
 <ol type="1">
-<li>For all <span class="math inline">\(i\in\{1..p\}\)</span>, we have <span class="math inline">\(X_i \perp_{d-sep} R_i \mid X_{J_1}, R_{K_1}\)</span> for some subset <span class="math inline">\(X_{J_1}\subset X\)</span>, and <span class="math inline">\(R_{K_1}\subset R\)</span> where <span class="math inline">\(J_1,\;K_1\)</span> are set of indices.</li>
+<li>For all <span class="math inline">\(i\in\{1..p\}\)</span>, we have <span class="math inline">\(X_i \perp_{d-sep} R_i \mid X_{J_1}, R_{K_1}\)</span> for some subset <span class="math inline">\(X_{J_1}\subset X\)</span>, and <span class="math inline">\(R_{K_1}\subset R\)</span> where <span class="math inline">\(J_1,\;K_1\)</span> are the set of indices.</li>
 <li>If <span class="math inline">\(J_1\neq\emptyset\)</span>, then, for each <span class="math inline">\(X_j\in X_{J_1}\)</span>, we have <span class="math inline">\(X_j \perp_{d-sep} R_j\mid X_{J_2}, R_{K_2}\)</span>.</li>
 <li>There exists <span class="math inline">\(N\)</span> such that <span class="math inline">\(X_{j_N} \perp_{d-sep} R_{j_N} \mid X_{J_{N+1}}, R_{K_{N+1}}\)</span> where <span class="math inline">\(J_{N+1}=\emptyset\)</span>.</li>
 <li><span class="math inline">\(J_1,...,J_N\)</span> are mutually exclusive.</li>
 </ol>
 </section>
+<section id="imputation" class="level2">
+<h2 class="anchored" data-anchor-id="imputation">Imputation</h2>
+<p>Once we obtain an estimate of <span class="math inline">\(\Sigma\)</span>, we can now sample <span class="math inline">\(L\)</span> from this target distribution or imputation. Namely, we wish to sample from the conditional distribution</p>
+<p><span id="eq-factorization"><span class="math display">\[
+\begin{equation}
+f(X_{miss} \mid X_{obs}, M) = \frac{f(X_{miss}, X_{obs}, M)}{\int\_{X_{miss}} f(X_{miss}, X_{obs}, M)}=\frac{f(X_{miss}\mid X_{obs})f(X_{obs})f(M\mid X_{pa(M)})f(M)}{\int_{X_{miss}}f(X_{miss}\mid X_{obs})f(X_{obs})f(M\mid X_{pa(M)})f(M)}
+\end{equation}
+\tag{1}\]</span></span></p>
+<p>Second equality holds because there are no directed edges from <span class="math inline">\(M\)</span> to <span class="math inline">\(X\)</span> in an mDAG. Depending on the mDAG structure, <span class="math inline">\(f(X)\)</span> and <span class="math inline">\(f(M)\)</span> can be further factorized. If <span class="math inline">\(X_{miss} \notin X_{pa(M)}\)</span>, then <a href="#eq-factorization" class="quarto-xref">Equation&nbsp;1</a> simply becomes <span class="math inline">\(\frac{f(X_{miss}\mid X_{obs})}{\int_{X_{miss}}f(X_{miss}\mid X_{obs})}\)</span>. From the semiparametric Gaussian copula model, using Kendall’s <span class="math inline">\(\tau\)</span>, we have estimated <span class="math inline">\(f(L)\)</span> which is the latent normal distribution underlying <span class="math inline">\(X\)</span>. Recall, the cumulative distribution function of <span class="math inline">\(X\)</span>, <span class="math inline">\(F(X)\)</span> can be written in terms of <span class="math inline">\(L\)</span> in the following way.</p>
+<p><span class="math display">\[
+\begin{align}
+F(x)&amp;=P_X\begin{pmatrix*}[l]
+    g_c(L_c)&amp;\leq x_c,\\
+    g_t(L_t)\cdot I( L_t&gt;\Delta_t)&amp;\leq x_t,\\
+    \sum_{k=1}^K k\cdot I(\Delta_{k-1}&lt;L_o&lt;\Delta_{k})&amp;\leq x_o,\\
+    I(L_b&gt;\Delta_b)&amp;\leq x_b,\\
+\end{pmatrix*}
+=P_L\begin{pmatrix*}[l]
+    L_c\leq g_c^{-1}(x_c),\\
+    \begin{cases}
+        L_t\leq\Delta_t,\text{ if } g^{-1}_t(x_t)&lt;\Delta_t, \;\\
+        L_t\leq g^{-1}_t(x_t),\text{ if } g^{-1}_t(x_t)&gt;\Delta_t,
+    \end{cases}\\
+    L_o\leq \Delta_{o,k}, \text{where } k= x_o\\
+    L_b\leq\Delta_b, \text{ if } x_b=0, \\
+\end{pmatrix*}
+\end{align}
+\]</span></p>
+<p>So, to impute missing values for <span class="math inline">\(X_{miss}\)</span>, we sample from the multivariate truncated normal distribution, <span class="math inline">\(f(L_{miss}\mid L_{obs})\)</span> and apply appropriate transformation with the estimated <span class="math inline">\(\Delta\)</span>’s and <span class="math inline">\(g(\cdot)\)</span>’s where <span class="math inline">\(g(\cdot)\)</span> can be estimated by <span class="math inline">\(\hat g_{c,t}(l_{c,t}) = \hat F^{-1}(\Phi(l_{c,t}))\)</span> where <span class="math inline">\(\hat F\)</span> is the empirical CDF. as suggested by <span class="citation" data-cites="liu2009">(<a href="#ref-liu2009" role="doc-biblioref">Liu, Lafferty, and Wasserman 2009</a>)</span>.</p>
+</section>
 <section id="illustrative-example" class="level2">
 <h2 class="anchored" data-anchor-id="illustrative-example">Illustrative Example</h2>
 <section id="toib-study" class="level3">
 <h3 class="anchored" data-anchor-id="toib-study">TOIB Study</h3>
-<p>The TOIB study examined whether general practitioners should recommend oral or topical non-steroidal anti-inflammatory drugs (NSAIDs) to older adults with knee pain. A total of 585 study participants were recruited from 26 UK general practices. This study had a comprehensive cohort study design where some practices only enrolled participants to randomized controlled trial (RCT), but some practices gave participants a choice to be randomized, or receive a treatment they preferred (participant preference study, PPS). Knee pain measured by Western Ontartio and McMaster Universities Osteoarthritis Index (WOMAC) was the primary outcome and SF-36 was the secondary outcome. Participant demographics were collected at baseline, and WOMAC, SF-12 surveys were filled out at 0, 3,6, 12, and 24 months. Baseline characteristics and baseline survey results were used as covariates and their relationship is shown in the DAG below.</p>
+<p>The TOIB study examined whether general practitioners should recommend oral or topical non-steroidal anti-inflammatory drugs (NSAIDs) to older adults with knee pain. A total of 585 study participants were recruited from 26 UK general practices. This study had a comprehensive cohort study design where some practices only enrolled participants to randomized controlled trial (RCT), but some practices gave participants a choice to be randomized, or receive a treatment they preferred (participant preference study, PPS). Knee pain measured by Western Ontario and McMaster Universities Osteoarthritis Index (WOMAC) was the primary outcome and SF-36 was the secondary outcome. Participant demographics were collected at baseline, and WOMAC, SF-12 surveys were filled out at 0, 3,6, 12, and 24 months. Baseline characteristics and baseline survey results were used as covariates, and their relationship is shown in the DAG below.</p>
 <div class="sourceCode" id="cb1"><pre class="sourceCode tikz code-with-copy"><code class="sourceCode latex"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">\begin</span>{<span class="ex">tikzpicture</span>}[node distance=1.5cm]</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span> (X11) [draw, circle] {<span class="ss">$X_{11}$</span>};</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">\node</span> (X12) [draw, circle, below=of X11] {<span class="ss">$X_{12}$</span>};</span>
@@ -280,39 +320,58 @@ X_b &amp;= I(Z_b &gt; \delta_{b})
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>    (X11) edge (M12)</span>
 <span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    (M12) edge[-] (M11);</span>
 <span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="kw">\end</span>{<span class="ex">tikzpicture</span>}</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<p>We can see from the above DAG, that missingness of <span class="math inline">\(X_{11}\)</span> depends on <span class="math inline">\(M_{12}\)</span> and the missingness of <span class="math inline">\(X_{12}\)</span> depends on <span class="math inline">\(X_{11}\)</span>. Therefore, we cannot use the observed data to calculate Kendall’s <span class="math inline">\(\tau\)</span>. We show in Appendix, the following estimation result. <span class="math display">\[\begin{equation}
+<p>We can see from the above DAG, that missingness of <span class="math inline">\(X_{11}\)</span> depends on <span class="math inline">\(M_{12}\)</span> and the missingness of <span class="math inline">\(X_{12}\)</span> depends on <span class="math inline">\(X_{11}\)</span>. Therefore, we cannot use the observed data to calculate Kendall’s <span class="math inline">\(\tau\)</span>. We show, in Appendix, the following estimation result. <span class="math display">\[
+\begin{equation}
 \widehat{\tau} = \frac{1}{ \left( \begin{array}{c} n \\ 2 \end{array} \right)} \sum_{k,k'} \widehat{h}(m_{12,k},m_{12,k'})
-\end{equation}\]</span> where <span class="math display">\[\begin{equation}
+\end{equation}
+\]</span> where</p>
+<p><span class="math display">\[
+\begin{equation}
 \widehat{h(}m_{12},m_{12}') = \frac{\sum_{l &lt; l'} \text{sgn}(X_{11,l} – X_{11,l'}) \cdot \widehat{g}(X_{11,l},X_{11,l'}) I( M_{11,l}=0, M_{11,l'}=0, M_{12,l}=m_{12}, M_{12,l'}=m_{12}')   }{\sum_{l &lt; l'} I(M_{11,l}=0, M_{11,l'}=0, M_{12,l}=m_{12}, M_{12,l'}=m_{12}')}
-\end{equation}\]</span> <span class="math display">\[\begin{equation}
+\end{equation}
+\]</span> <span class="math display">\[
+\begin{equation}
 \widehat{g}(\mathbf{x_{11}}) = \frac{ \sum_{j&lt;j'} \text{sgn}( (X_{12,j} – X_{12,j'}) I(\mathbf{X_{11}}=\mathbf{x_{11}}, M_{11,j}=0, M_{11,j'}=0,M_{12,j}=0, M_{12,j'}=0)  }{\sum_{j&lt;j'}  I(\mathbf{X_{11}}=\mathbf{x_{11}},',  M_{11,j}=0, M_{11,j'}=0, M_{12,j}=0, M_{12,j'}=0)}
-\end{equation}\]</span></p>
+\end{equation}
+\]</span></p>
 </section>
 </section>
 </section>
 <section id="appendix" class="level1">
 <h1>Appendix</h1>
-<p><span class="math display">\[\begin{align}
+<p><span class="math display">\[
+\begin{align}
     \tau=&amp;E\big[ \text{sgn}( (X_{12} – X_{12}') (X_{11} – X_{11}') \big]\\
     =&amp;E\bigg[E\big[ \text{sgn}( (X_{12} – X_{12}') (X_{11} – X_{11}')) \mid \mathbf{X_{11,11'}} \big]\bigg]\\
     =&amp;E\bigg[\text{sgn}(X_{11} – X_{11}') \cdot E\big[ \text{sgn}( X_{12} – X_{12}') \mid \mathbf{X_{11,11'}} \big]\bigg]\\
     =&amp;E\bigg[\text{sgn}(X_{11} – X_{11}') \cdot E\big[ \text{sgn}( X_{12} – X_{12}') \mid \mathbf{X_{11,11'}}, M_{12}=0, M_{12}'=0, M_{11}=0, M_{11}'=0 \big]\bigg]\\
     =&amp;E\bigg[E\bigg[\text{sgn}(X_{11} – X_{11}') \cdot E\big[ \text{sgn}( X_{12} – X_{12}') \mid \mathbf{X_{11,11'}}, M_{12}=0, M_{12}'=0,M_{11}=0, M_{11}'=0 \big] \bigg| M_{12}, M_{12}'  \bigg]\bigg]\\
-    =&amp;E\bigg[\underbrace{E\bigg[\color{blue}\text{sgn}(X_{11} – X_{11}') \cdot \underbrace{E\big[ \text{sgn}( X_{12} – X_{12}') \mid \mathbf{X_{11,11'}}, M_{12}=0, M_{12}'=0,M_{11}=0, M_{11}'=0 \big]}_{g(\mathbf{X_{11,11'}})} \color{black}\bigg| M_{11}=0, M_{11}'=0, M_{12}, M_{12}'  \bigg]}_{h(M_{12},M_{12'})}\bigg]\\
-\end{align}\]</span></p>
-<p><span class="math display">\[\begin{align}
+    =&amp;E\bigg[\underbrace{E\bigg[\color{blue}\text{sgn}(X_{11} – X_{11}') \cdot \underbrace{E\big[ \text{sgn}( X_{12} – X_{12}') \mid \mathbf{X_{11,11'}}, M_{12}=0, M_{12}'=0,M_{11}=0, M_{11}'=0 \big]}_{g(\mathbf{X_{11,11'}})} \color{black}\bigg| M_{11}=0, M_{11}'=0, M_{12}, M_{12}'  \bigg]}_{h(M_{12},M_{12'})}\bigg]
+\end{align}
+\]</span></p>
+<p><span class="math display">\[
+\begin{align}
 g(\mathbf{X_{11,11'}}) &amp; = E\big[ \text{sgn}( (X_{12} – X_{12}') \mid \mathbf{X_{11,11'}}, M_{11}=0,M_{11'}=0, M_{12}=0, M_{12}'=0 \big] \\&amp; = \frac{ E \big[ \text{sgn}( (X_{12} – X_{12}') I(\mathbf{X_{11}}=\mathbf{x_{11}}, M_{11}=0, M_{11'}=0,M_{12}=0, M_{12}'=0) \big] }{E\big[  I(\mathbf{X_{11}}=\mathbf{x_{11}}, M_{11}=0, M_{11'}=0, M_{12}=0, M_{12}'=0) \big]}
-\end{align}\]</span> We can estimate this by <span class="math display">\[\begin{equation}
+\end{align}
+\]</span> We can estimate this by <span class="math display">\[
+\begin{equation}
 \widehat{g}(\mathbf{x_{11}}) = \frac{ \sum_{j&lt;j'} \text{sgn}( (X_{12,j} – X_{12,j'}) I(\mathbf{X_{11}}=\mathbf{x_{11}}, M_{11,j}=0, M_{11,j'}=0,M_{12,j}=0, M_{12,j'}=0)  }{\sum_{j&lt;j'}  I(\mathbf{X_{11}}=\mathbf{x_{11}},',  M_{11,j}=0, M_{11,j'}=0, M_{12,j}=0, M_{12,j'}=0)}
-\end{equation}\]</span></p>
-<p><span class="math display">\[\begin{align*}
+\end{equation}
+\]</span></p>
+<p><span class="math display">\[
+\begin{align*}
 h(m_{12},m_{12}') &amp; = E\bigg[ \text{sgn}(X_{11} – X_{11}') \cdot g(X_{11},X_{11'}) \bigg| M_{11}=0, M_{11}'=0, M_{12}=m_{12}, M_{12}'=m_{12}'  \bigg] \\
 &amp; = \frac{E\bigg[ \text{sgn}(X_{11} – X_{11}') \cdot g(X_{11},X_{11'}) I( M_{11}=0, M_{11}'=0, M_{12}=m_{12}, M_{12}'=m_{12}')  \bigg]  }{E\bigg[ I(M_{11}=0, M_{11}'=0, M_{12}=m_{12}, M_{12}'=m_{12}')  \bigg] }
-\end{align*}\]</span> This can be estimated by <span class="math display">\[\begin{equation}
+\end{align*}
+\]</span> This can be estimated by <span class="math display">\[
+\begin{equation}
 \widehat{h(}m_{12},m_{12}') = \frac{\sum_{l &lt; l'} \text{sgn}(X_{11,l} – X_{11,l'}) \cdot \widehat{g}(X_{11,l},X_{11,l'}) I( M_{11,l}=0, M_{11,l'}=0, M_{12,l}=m_{12}, M_{12,l'}=m_{12}')   }{\sum_{l &lt; l'} I(M_{11,l}=0, M_{11,l'}=0, M_{12,l}=m_{12}, M_{12,l'}=m_{12}')}
-\end{equation}\]</span> Now <span class="math inline">\(\tau = E[h(M_{12},M_{12}')]\)</span> Then, we estimate <span class="math inline">\(\tau\)</span> by <span class="math display">\[\begin{equation}
+\end{equation}
+\]</span> Now <span class="math inline">\(\tau = E[h(M_{12},M_{12}')]\)</span> Then, we estimate <span class="math inline">\(\tau\)</span> by <span class="math display">\[
+\begin{equation}
 \widehat{\tau} = \frac{1}{ \left( \begin{array}{c} n \\ 2 \end{array} \right)} \sum_{k,k'} \widehat{h}(m_{12,k},m_{12,k'})
-\end{equation}\]</span></p>
+\end{equation}
+\]</span></p>
 
 
 
